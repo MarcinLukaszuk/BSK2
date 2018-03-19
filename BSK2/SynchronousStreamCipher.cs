@@ -31,6 +31,28 @@ namespace BSK2
             return output;
         }
 
+        public int GetNext(int wejscie)
+        {
+            int output = Xor();
+
+            output = (output + wejscie) % 2;
+
+            _actualLFSRState.RemoveLast();
+            _actualLFSRState.AddFirst(output);
+            return output;
+        }
+        public int GetNext2(int wejscie)
+        {
+            int output = Xor();
+
+            output = (output + wejscie) % 2;
+
+            _actualLFSRState.RemoveLast();
+            _actualLFSRState.AddFirst(wejscie);
+            return output;
+        }
+
+
         private int Xor()
         {
             int counter = 0;
@@ -43,12 +65,12 @@ namespace BSK2
 
     public class SynchronousStreamCipher
     {
-        List<byte> _inputBytesArray;
-        List<byte> _outputBytesArray;
+        protected List<byte> _inputBytesArray;
+        protected List<byte> _outputBytesArray;
 
-        private LFSR2 LFSR;
-        private string _seed;
-        private string _polynomial;
+        protected LFSR2 LFSR;
+        protected string _seed;
+        protected string _polynomial;
         public SynchronousStreamCipher(string seed, string polynomial)
         {
             _seed = seed;
@@ -99,13 +121,13 @@ namespace BSK2
         }
 
 
-        private int[] ConvertByteToBitsArray(byte _byte)
+        protected int[] ConvertByteToBitsArray(byte _byte)
         {
             string stringBits = Convert.ToString(_byte, 2).PadLeft(8, '0');
             int[] intArrayOutput = stringBits.Select(x => int.Parse(x.ToString())).ToArray();
             return intArrayOutput;
         }
-        private byte ConvertBitsArrayToByte(int[] _bitsArray)
+        protected byte ConvertBitsArrayToByte(int[] _bitsArray)
         {
             byte val = 0;
             foreach (bool b in _bitsArray.Select(x => x == 1 ? true : false))
@@ -115,8 +137,114 @@ namespace BSK2
             }
             return val;
         }
-
-
-
     }
+
+    public class AutokeyStreamCipher
+    {
+        protected List<byte> _inputBytesArray;
+        protected List<byte> _outputBytesArray;
+
+        protected LFSR2 LFSR;
+        protected string _seed;
+        protected string _polynomial;
+        public AutokeyStreamCipher(string seed, string polynomial)
+        {
+            _seed = seed;
+            _polynomial = polynomial;
+        }
+        public void Encrypt(string filePath)
+        {
+            LFSR = new LFSR2(_seed, _polynomial);
+            _inputBytesArray = File.ReadAllBytes(filePath).ToList();
+            _outputBytesArray = new List<byte>();
+
+            #region LocalVariables
+            int[] inputBitsArray;
+            int[] outputBitsArray = new int[8];
+
+            int LFSROutput;
+            int decoded;
+            #endregion 
+            foreach (byte _byte in _inputBytesArray)
+            {
+                inputBitsArray = ConvertByteToBitsArray(_byte);
+                for (int i = 0; i < inputBitsArray.Length; i++)
+                {
+                    decoded = inputBitsArray[i];
+                    LFSROutput = LFSR.GetNext(decoded);
+                    outputBitsArray[i] = LFSROutput;
+                }
+                _outputBytesArray.Add(ConvertBitsArrayToByte(outputBitsArray));
+            }
+
+            File.WriteAllBytes("decoded" + filePath, _outputBytesArray.ToArray());
+        }
+        public void Decrypt(string filePath)
+        {
+            LFSR = new LFSR2(_seed, _polynomial);
+            _inputBytesArray = File.ReadAllBytes(filePath).ToList();
+            _outputBytesArray = new List<byte>();
+
+            #region LocalVariables
+            int[] inputBitsArray;
+            int[] outputBitsArray = new int[8];
+
+            int LFSROutput;
+            int decoded;
+            #endregion 
+            foreach (byte _byte in _inputBytesArray)
+            {
+                inputBitsArray = ConvertByteToBitsArray(_byte);
+                for (int i = 0; i < inputBitsArray.Length; i++)
+                {
+                    decoded = inputBitsArray[i];
+                    LFSROutput = LFSR.GetNext2(decoded);
+                    outputBitsArray[i] = LFSROutput  ;
+                }
+                _outputBytesArray.Add(ConvertBitsArrayToByte(outputBitsArray));
+            }
+
+            File.WriteAllBytes("decoded" + filePath, _outputBytesArray.ToArray());
+        }
+
+
+
+
+        public string EncryptString(string text)
+        {
+            StringBuilder sb = new StringBuilder();
+            LFSR = new LFSR2(_seed, _polynomial);
+
+            int actualNumber;
+            int actualXor;
+            foreach (var item in text)
+            {
+                actualNumber = item == '1' ? 1 : 0;
+                actualXor = LFSR.GetNext();
+                sb.Append((actualNumber + actualXor) % 2 == 1 ? "1" : "0");
+            }
+            return (sb.ToString());
+        }
+
+
+        protected int[] ConvertByteToBitsArray(byte _byte)
+        {
+            string stringBits = Convert.ToString(_byte, 2).PadLeft(8, '0');
+            int[] intArrayOutput = stringBits.Select(x => int.Parse(x.ToString())).ToArray();
+            return intArrayOutput;
+        }
+        protected byte ConvertBitsArrayToByte(int[] _bitsArray)
+        {
+            byte val = 0;
+            foreach (bool b in _bitsArray.Select(x => x == 1 ? true : false))
+            {
+                val <<= 1;
+                if (b) val |= 1;
+            }
+            return val;
+        }
+    }
+
+
+
 }

@@ -13,7 +13,8 @@ namespace BSK2
         static void Main(string[] args)
         {
             SynchronousStreamCipher SSC = new SynchronousStreamCipher("0010", "10011");
-            SSC.Encrypt("test.bin");
+        //   SSC.Encrypt("test.bin");
+            SSC.Encrypt("decodedtest.bin");
             
         }
     }
