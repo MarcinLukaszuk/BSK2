@@ -101,7 +101,7 @@ namespace BSK2
                 _outputBytesArray.Add(ConvertBitsArrayToByte(outputBitsArray));
             }
 
-            File.WriteAllBytes("decoded" + filePath, _outputBytesArray.ToArray());
+            File.WriteAllBytes("decoded.bin", _outputBytesArray.ToArray());
         }
 
         public string EncryptString(string text)
@@ -177,7 +177,7 @@ namespace BSK2
                 _outputBytesArray.Add(ConvertBitsArrayToByte(outputBitsArray));
             }
 
-            File.WriteAllBytes("decoded" + filePath, _outputBytesArray.ToArray());
+            File.WriteAllBytes("encoded.bin", _outputBytesArray.ToArray());
         }
         public void Decrypt(string filePath)
         {
@@ -204,7 +204,7 @@ namespace BSK2
                 _outputBytesArray.Add(ConvertBitsArrayToByte(outputBitsArray));
             }
 
-            File.WriteAllBytes("decoded" + filePath, _outputBytesArray.ToArray());
+            File.WriteAllBytes("decoded.bin", _outputBytesArray.ToArray());
         }
 
 
