@@ -6,9 +6,7 @@ using System.Text;
 
 namespace BSK2
 {
-
-
-    public class SynchronousStreamCipher
+    public class AutokeyStreamCipher
     {
         protected List<byte> _inputBytesArray;
         protected List<byte> _outputBytesArray;
@@ -16,12 +14,38 @@ namespace BSK2
         protected LFSR LFSR;
         protected string _seed;
         protected string _polynomial;
-        public SynchronousStreamCipher(string seed, string polynomial)
+        public AutokeyStreamCipher(string seed, string polynomial)
         {
             _seed = seed;
             _polynomial = polynomial;
         }
         public void Encrypt(string filePath, string outputfile)
+        {
+            LFSR = new LFSR(_seed, _polynomial);
+            _inputBytesArray = File.ReadAllBytes(filePath).ToList();
+            _outputBytesArray = new List<byte>();
+
+            #region LocalVariables
+            int[] inputBitsArray;
+            int[] outputBitsArray = new int[8];
+
+            int LFSROutput;
+            int decoded;
+            #endregion  
+            foreach (byte _byte in _inputBytesArray)
+            {
+                inputBitsArray = ConvertByteToBitsArray(_byte);
+                for (int i = 0; i < inputBitsArray.Length; i++)
+                {
+                    decoded = inputBitsArray[i];
+                    LFSROutput = LFSR.GetNext(decoded);
+                    outputBitsArray[i] = LFSROutput;
+                }
+                _outputBytesArray.Add(ConvertBitsArrayToByte(outputBitsArray)); 
+            }
+            File.WriteAllBytes(outputfile, _outputBytesArray.ToArray());
+        }
+        public void Decrypt(string filePath, string outputfile)
         {
             LFSR = new LFSR(_seed, _polynomial);
             _inputBytesArray = File.ReadAllBytes(filePath).ToList();
@@ -39,16 +63,14 @@ namespace BSK2
                 inputBitsArray = ConvertByteToBitsArray(_byte);
                 for (int i = 0; i < inputBitsArray.Length; i++)
                 {
-                    LFSROutput = LFSR.GetNext();
                     decoded = inputBitsArray[i];
-                    outputBitsArray[i] = LFSROutput == decoded ? 0 : 1;
+                    LFSROutput = LFSR.GetNext2(decoded);
+                    outputBitsArray[i] = LFSROutput;
                 }
                 _outputBytesArray.Add(ConvertBitsArrayToByte(outputBitsArray));
             }
-
             File.WriteAllBytes(outputfile, _outputBytesArray.ToArray());
         }
-
         public string EncryptString(string text)
         {
             StringBuilder sb = new StringBuilder();
@@ -83,7 +105,6 @@ namespace BSK2
             return val;
         }
     }
-
 
 
 }

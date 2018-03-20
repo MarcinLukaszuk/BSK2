@@ -1,0 +1,24 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <TextBox Name="polynominal" HorizontalAlignment="Left" Height="26" Margin="115,11,0,0" TextWrapping="Wrap"   VerticalAlignment="Top" Width="176"/>
+        <Label Content="Polynominal" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <TextBox  Name="seed" HorizontalAlignment="Left" Height="26" Margin="115,41,0,0" TextWrapping="Wrap"    VerticalAlignment="Top" Width="176"/>
+        <Label  Content="Seed" HorizontalAlignment="Left" Margin="50,41,0,0" VerticalAlignment="Top"/>
+        <TextBox Name="inputfile" HorizontalAlignment="Left" Height="26" Margin="115,84,0,0" TextWrapping="Wrap"   VerticalAlignment="Top" Width="176"/>
+        <Label Content="Input file path" HorizontalAlignment="Left" Margin="10,83,0,0" VerticalAlignment="Top"/>
+        <Button Content="szyfruj LFSR" HorizontalAlignment="Left" Margin="10,162,0,0" VerticalAlignment="Top" Width="130" Height="114" Click="Button_Click"/>
+        <Button Content="szyfruj synch" HorizontalAlignment="Left" Margin="170,176,0,0" VerticalAlignment="Top" Width="95" Height="114" Click="Button_Click_1"/>
+        <Button Content="deszyfruj autokey" HorizontalAlignment="Left" Margin="413,132,0,0" VerticalAlignment="Top" Width="95" Height="114" Click="Button_Click_3"/>
+        <Button Content="szyfruj autokey" HorizontalAlignment="Left" Margin="298,162,0,0" VerticalAlignment="Top" Width="95" Height="114" Click="Button_Click_2"/>
+        <TextBox x:Name="outputfile" HorizontalAlignment="Left" Height="26" Margin="115,115,0,0" TextWrapping="Wrap"   VerticalAlignment="Top" Width="176"/>
+        <Label Content="output file path" HorizontalAlignment="Left" Margin="10,114,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.454,1.895"/>
+        <Button Content="porownaj" HorizontalAlignment="Left" Margin="348,27,0,0" VerticalAlignment="Top" Width="77" Height="82" Click="Button_Click_4"/>
+    </Grid>
+</Window>
